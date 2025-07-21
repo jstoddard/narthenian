@@ -97,7 +97,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     window_w = DISPLAY_WIDTH * 2;
     window_h = DISPLAY_HEIGHT * 2;
     draw_w = draw_h = window_h / 15;
-    if (!SDL_CreateWindowAndRenderer("Hello, World!", window_w, window_h, SDL_WINDOW_RESIZABLE, &window, &renderer)) {
+    if (!SDL_CreateWindowAndRenderer("The Narthenian Conspiracy", window_w, window_h, SDL_WINDOW_RESIZABLE, &window, &renderer)) {
         SDL_Log("Couldn't create window/renderer: %s", SDL_GetError());
         return SDL_APP_FAILURE;
     }
