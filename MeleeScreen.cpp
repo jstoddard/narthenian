@@ -450,7 +450,6 @@ void MeleeScreen::check_level_up()
                              ", and intelligence is " + std::to_string(game_screen->player.combatant.intelligence) + ".");
         set_state(melee_wait_ack);
         prev_state = melee_over;
-        wait_frames = 20;
     }
     else
     {

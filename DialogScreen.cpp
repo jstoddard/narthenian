@@ -40,11 +40,6 @@ void DialogScreen::iterate() {
         cur_screen = game_screen;
         return;
     }
-    if (wait_frames > 0)
-    {
-        wait_frames--;
-        return;
-    }
     switch(state) {
         case ds_load_dialog:
             talk("");
@@ -84,8 +79,8 @@ void DialogScreen::use_dialog_entry(const NPC::DialogEntry& de) {
     for (const auto& line : de.lines) {
         message_box.add_line(line);
     }
+    message_box.prompt() = true;
     set_state(ds_wait_ack);
-    wait_frames = 20; // Give player a chance to take his/her hand off the action button
 }
 
 void DialogScreen::talk(const std::string& prompt) {
@@ -113,8 +108,8 @@ void DialogScreen::talk(const std::string& prompt) {
 
     // No dialog entry to use; display a generic message and end the dialog.
     message_box.add_line("Hello!");
+    message_box.prompt() = true;
     set_state(ds_wait_ack);
-    wait_frames = 20; // Give player a chance to take his/her hand off the action button
 }
 
 void DialogScreen::set_state(DialogScreen::DialogScreenState new_state) {

@@ -24,6 +24,8 @@
 
 Screen::Command Screen::get_cmd() {
     static const bool *keys = SDL_GetKeyboardState(nullptr);
+    static bool action1_prev_state = false;
+    static bool action2_prev_state = false;
     // TODO: Gamepad support, maybe user-editable controls
     Command cmd = CMD_NONE;
     if (keys[SDL_SCANCODE_UP] || keys[SDL_SCANCODE_W])
@@ -34,9 +36,19 @@ Screen::Command Screen::get_cmd() {
         cmd = CMD_LEFT;
     if (keys[SDL_SCANCODE_RIGHT] || keys[SDL_SCANCODE_D])
         cmd = CMD_RIGHT;
-    if (keys[SDL_SCANCODE_RETURN])
+    if (!keys[SDL_SCANCODE_RETURN]) {
+        action1_prev_state = false;
+    }
+    else if (action1_prev_state == false) {
         cmd = CMD_ACTION1;
-    if (keys[SDL_SCANCODE_SPACE])
+        action1_prev_state = true;
+    }
+    if (!keys[SDL_SCANCODE_SPACE]) {
+        action2_prev_state = false;
+    }
+    else if (action2_prev_state == false) {
         cmd = CMD_ACTION2;
+        action2_prev_state = true;
+    }
     return cmd;
 }
