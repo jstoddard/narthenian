@@ -41,7 +41,8 @@
  */
 class GameScreen : public Screen {
 private:
-   std::unordered_map<std::string, AreaMap*> maps {};
+    std::unordered_map<std::string, AreaMap*> maps {};
+    AreaMap *cur_map;
     enum States {
         game_waiting, game_delay_input,
         game_moving_up, game_moving_down, game_moving_left, game_moving_right,
@@ -73,7 +74,6 @@ public:
     void iterate() override;
     void draw(int frame) override;
     Player player;
-    AreaMap *cur_map;
 
     void init_npcs();
 };

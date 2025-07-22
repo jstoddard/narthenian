@@ -36,7 +36,7 @@ private:
     Menu prompt_menu;
     std::string current_prompt;
     int wait_frames = 0;
-    int cur_npc = 0;
+    NPC *cur_npc = nullptr;
     enum DialogScreenState { ds_load_dialog, ds_prompt, ds_wait_ack, ds_done };
     DialogScreenState state = ds_done;
     void use_dialog_entry(const NPC::DialogEntry& de);
@@ -46,7 +46,7 @@ public:
     DialogScreen();
     void iterate() override;
     void draw(int frame) override;
-    void set_npc(int new_npc);
+    void set_npc(NPC *new_npc);
     void talk(const std::string& prompt);
 };
 

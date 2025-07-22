@@ -35,6 +35,11 @@ DialogScreen::DialogScreen()
 }
 
 void DialogScreen::iterate() {
+    if (!cur_npc)
+    {
+        cur_screen = game_screen;
+        return;
+    }
     if (wait_frames > 0)
     {
         wait_frames--;
@@ -68,7 +73,7 @@ void DialogScreen::draw(int frame) {
     message_box.draw(frame);
 }
 
-void DialogScreen::set_npc(int new_npc) {
+void DialogScreen::set_npc(NPC *new_npc) {
     cur_npc = new_npc;
     message_box.clear();
     set_state(ds_load_dialog);
@@ -89,7 +94,7 @@ void DialogScreen::talk(const std::string& prompt) {
     // little more complete, we'll go through the quest related dialogs first. For now, start with prompt, assuming
     // it is not blank, and if nothing is found, move along to generic dialog entries
     if (!prompt.empty()) {
-        for (const auto& de : game_screen->cur_map->npcs[cur_npc].dialog_entries) {
+        for (const auto& de : cur_npc->dialog_entries) {
             if (de.condition == NPC::DialogCondition::dc_prompt && de.prompt == prompt) {
                 use_dialog_entry(de);
                 return;
@@ -98,7 +103,7 @@ void DialogScreen::talk(const std::string& prompt) {
     }
 
     // If no dialog entry has been found so far, let's try to find a generic one
-    for (const auto& de: game_screen->cur_map->npcs[cur_npc].dialog_entries)
+    for (const auto& de: cur_npc->dialog_entries)
     {
         if (de.condition == NPC::DialogCondition::dc_none) {
             use_dialog_entry(de);

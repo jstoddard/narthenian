@@ -449,11 +449,10 @@ void GameScreen::talk() {
             x++;
             break;
     }
-    for (int i = 0; i < cur_map->npcs.size(); i++) {
-        auto& npc = cur_map->npcs[i];
+    for (auto& npc : cur_map->npcs) {
         if (npc.x == x && npc.y == y) {
             npc.turn(player.dir);
-            dialog_screen->set_npc(i);
+            dialog_screen->set_npc(&npc);
             cur_screen = dialog_screen;
         }
     }
