@@ -40,7 +40,9 @@ MeleeScreen::MeleeScreen()
     menu(draw_w, draw_h, 6, 5, {"Fight", "Spell", "Defend", "Flee"}) {
     // Load image of each monster
     monster_textures.insert({{"serpent", IMG_LoadTexture(renderer, (asset_dir / "serpent.png").c_str())},
-                            {"gigarat", IMG_LoadTexture(renderer, (asset_dir / "gigarat.png").c_str())}});
+                            {"gigarat", IMG_LoadTexture(renderer, (asset_dir / "gigarat.png").c_str())},
+                             {"highwayman", IMG_LoadTexture(renderer, (asset_dir / "highwayman.png").c_str())},
+                             {"mage", IMG_LoadTexture(renderer, (asset_dir / "mage.png").c_str())}});
     // Set monster textures to scale as pixel art
     for (const auto& t : monster_textures)
         SDL_SetTextureScaleMode(t.second, SDL_SCALEMODE_NEAREST);
@@ -169,18 +171,24 @@ void MeleeScreen::init_melee(int zone) {
     switch(zone)
     {
         case 2:
-        case 3:
-        case 4:
             bg = 0;
             select_enemy({"serpent", "gigarat"});
             break;
+        case 3:
+            bg = 0;
+            select_enemy({"gigarat", "highwayman", "mage"});
+            break;
+        case 4:
+            bg = 0;
+            select_enemy({"gigarat", "highwayman", "mage"});
+            break;
         case 5:
             bg = 1;
-            set_enemy("gigarat");
+            select_enemy({"gigarat", "highwayman", "mage"});
             break;
         case 6:
             bg = 2;
-            set_enemy("gigarat");
+            select_enemy({"gigarat", "mage"});
             break;
         case 7:
         case 8:
@@ -341,6 +349,24 @@ void MeleeScreen::init_monsters() {
     gigarat.exp = 2;
     gigarat.lvl = 1;
     enemies.insert({"gigarat", gigarat});
+
+    Combatant highwayman;
+    highwayman.name = "highwayman";
+    highwayman.max_hp = 15;
+    highwayman.strength = 7;
+    highwayman.resilience = 5;
+    highwayman.exp = 5;
+    highwayman.lvl = 3;
+    enemies.insert({"highwayman", highwayman});
+
+    Combatant mage;
+    mage.name = "mage";
+    mage.max_hp = 12;
+    mage.strength = 9;  // This will be lowered when spellcasting ability is implemented
+    mage.resilience = 3;
+    mage.exp = 5;
+    mage.lvl = 3;
+    enemies.insert({"mage", mage});
 }
 
 void MeleeScreen::set_enemy(const std::string& e) {
