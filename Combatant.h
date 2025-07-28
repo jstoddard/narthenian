@@ -42,6 +42,7 @@ struct Combatant {
     // std::vector<Effects> active_effects;
     int exp = 0;
     int lvl = 1;
+    int gold = 0;
     bool is_player = false;
     [[nodiscard]] std::string name_with_article() const;
 };

@@ -29,6 +29,7 @@
 #include <list>
 #include <SDL3/SDL.h>
 #include "NPC.h"
+#include "Innkeeper.h"
 
 /**
  * @brief A map of an area the user might be in
@@ -65,6 +66,7 @@ public:
     };
     std::vector<Portal> portals {};
     std::vector<NPC> npcs {};
+    std::vector<Innkeeper> innkeepers {};
 
     /**
      * @brief Returns the zone for the given tile

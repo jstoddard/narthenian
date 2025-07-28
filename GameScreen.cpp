@@ -28,6 +28,9 @@
 #include "Sound.h"
 #include "common.h"
 #include "DialogScreen.h"
+#include "NPC.h"
+#include "Innkeeper.h"
+#include "InnScreen.h"
 
 extern int window_h, window_w;
 extern int draw_h, draw_w;
@@ -36,6 +39,7 @@ extern Sound *sound;
 extern Screen *cur_screen;
 extern MeleeScreen *melee_screen;
 extern DialogScreen *dialog_screen;
+extern InnScreen *inn_screen;
 
 GameScreen::GameScreen() {
     maps.insert({
@@ -87,6 +91,13 @@ void GameScreen::init_npcs() {
     mark.dialog_entries[0].lines.emplace_back("the northwest. We have been troubled");
     mark.dialog_entries[0].lines.emplace_back("by powerful monsters lately.");
     cnpc.push_back(mark);
+
+    // Carathusia Inkeeper
+    auto& cinnk = maps.find("carathusia")->second->innkeepers;
+    cinnk.push_back({4, 20, 5, dir_down, 20, 6, 5,
+                       {"Welcome to Carathusia inn. We charge",
+                        "5 gold per night. Will you be",
+                        "staying with us tonight?"}});
 }
 
 void GameScreen::new_game() {
@@ -266,22 +277,32 @@ void GameScreen::draw(int frame) {
 
     // draw npcs
     for (const auto& npc : cur_map->npcs) {
-        int x = npc.x * 16;
-        int y = npc.y * 16;
-        if (x + 16 > x_start && x < x_start + 17*(window_w/draw_w)
-            && y + 16 > y_start && y < y_start + 16*(window_h/draw_h)) {
-            SDL_FRect src;
-            SDL_FRect dst;
-            src.x = (float)(16 * (npc.dir + frame));
-            src.y = (float)(16 * npc.sprite);
-            src.w = 16;
-            src.h = 16;
-            dst.x = (float)((x - x_start)) * ((float)draw_w/16);
-            dst.y = (float)((y - y_start)) * ((float)draw_h/16);
-            dst.w = (float)draw_w;
-            dst.h = (float)draw_h;
-            SDL_RenderTexture(renderer, sprites, &src, &dst);
-        }
+        draw_sprite(frame, npc.sprite, npc.x, npc.y, x_start, y_start, npc.dir);
+    }
+
+    // draw innkeepers
+    // this is repetitive, but that's what I get for not subclassing npcs
+    for (const auto& innk : cur_map->innkeepers) {
+        draw_sprite(frame, innk.sprite, innk.x, innk.y, x_start, y_start, innk.dir);
+    }
+}
+
+void GameScreen::draw_sprite(int frame, int sprite, int x, int y, int x_start, int y_start, Direction dir) {
+    int _x = x * 16;
+    int _y = y * 16;
+    if (_x + 16 > x_start && _x < x_start + 17*(window_w/draw_w)
+        && _y + 16 > y_start && _y < y_start + 16*(window_h/draw_h)) {
+        SDL_FRect src;
+        SDL_FRect dst;
+        src.x = (float)(16 * (dir + frame));
+        src.y = (float)(16 * sprite);
+        src.w = 16;
+        src.h = 16;
+        dst.x = (float)((_x - x_start)) * ((float)draw_w/16);
+        dst.y = (float)((_y - y_start)) * ((float)draw_h/16);
+        dst.w = (float)draw_w;
+        dst.h = (float)draw_h;
+        SDL_RenderTexture(renderer, sprites, &src, &dst);
     }
 }
 
@@ -292,6 +313,12 @@ bool GameScreen::precheck_tile(int x, int y) {
     }
     for (const auto& npc : cur_map->npcs) {
         if (npc.x == x && npc.y == y) {
+            bump();
+            return false;
+        }
+    }
+    for (const auto& innk : cur_map->innkeepers) {
+        if (innk.x == x && innk.y == y) {
             bump();
             return false;
         }
@@ -433,6 +460,9 @@ void GameScreen::bump() {
 
 void GameScreen::talk() {
     // If there is an NPC directly in front of the player, talk
+    delay_frames = 20;
+    cur_state = game_delay_input;
+
     int x = player.x;
     int y = player.y;
     switch(player.dir) {
@@ -454,8 +484,15 @@ void GameScreen::talk() {
             npc.turn(player.dir);
             dialog_screen->set_npc(&npc);
             cur_screen = dialog_screen;
+            return;
         }
     }
-    delay_frames = 20;
-    cur_state = game_delay_input;
+    // No plain NPC found, look for innkeepers
+   for (auto& innk : cur_map->innkeepers) {
+       if (innk.check_x == x && innk.check_y == y) {
+            inn_screen->reset_inn(&innk);
+            cur_screen = inn_screen;
+           return;
+       }
+   }
 }

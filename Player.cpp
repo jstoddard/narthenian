@@ -42,6 +42,8 @@ void Player::level_up() {
         combatant.resilience += ud(re);
         combatant.dexterity += ud(re);
         combatant.intelligence += ud(re);
+        combatant.max_hp += ud(re);
+        combatant.max_mp += ud(re);
     }
     combatant.lvl = new_lvl;
     combatant.hp = combatant.max_hp;

@@ -49,6 +49,10 @@ add_executable(narthenian main.cpp
         Player.h
         common.h
         NPC.cpp
-        NPC.h)
+        NPC.h
+        Innkeeper.cpp
+        Innkeeper.h
+        InnScreen.cpp
+        InnScreen.h)
 target_include_directories(narthenian PUBLIC ${SDL3_INCLUDE_DIRS} ${SDL3_image_INCLUDE_DIRS})
 target_link_libraries(narthenian PRIVATE SDL3_image::SDL3_image SDL3::SDL3)

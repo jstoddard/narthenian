@@ -59,7 +59,7 @@ MeleeScreen::MeleeScreen()
 
     // Most of this is recalculated in draw, so probably should just move the rest of it there and skip it here
     stats_box.setpos(window_w - 7 * draw_w, draw_h);
-    stats_box.setsize(6, 5);
+    stats_box.setsize(6, 6);
     message_box.setpos(draw_w, window_h - 6 * draw_h);
     message_box.setsize(window_w / draw_w - 2, 5);
 
@@ -105,8 +105,11 @@ void MeleeScreen::iterate() {
             do_monster_turn();
             break;
         case melee_player_won:
-            message_box.add_line("You have vanquished the " + enemy.name);
+            message_box.add_line("You have vanquished the " + enemy.name + ".");
+            message_box.add_line("You receive " + std::to_string(enemy.exp) + " experience and");
+            message_box.add_line(std::to_string(enemy.gold) + " gold.");
             game_screen->player.add_experience(enemy.exp);
+            game_screen->player.combatant.gold += enemy.gold;
             message_box.prompt() = true;
             set_state(melee_wait_ack);
             prev_state = melee_check_level_up;
@@ -134,6 +137,7 @@ void MeleeScreen::iterate() {
     stats_box.add_line("MP " + std::to_string(game_screen->player.combatant.mp));
     stats_box.add_line("Lvl " + std::to_string(game_screen->player.combatant.lvl));
     stats_box.add_line("Exp " + std::to_string(game_screen->player.combatant.exp));
+    stats_box.add_line("G  " + std::to_string(game_screen->player.combatant.gold));
 }
 
 void MeleeScreen::draw(int frame) {
@@ -339,6 +343,7 @@ void MeleeScreen::init_monsters() {
     serpent.resilience = 3;
     serpent.exp = 1;
     serpent.lvl = 1;
+    serpent.gold = 1;
     enemies.insert({"serpent", serpent});
 
     Combatant gigarat;
@@ -348,6 +353,7 @@ void MeleeScreen::init_monsters() {
     gigarat.resilience = 3;
     gigarat.exp = 2;
     gigarat.lvl = 1;
+    gigarat.gold = 2;
     enemies.insert({"gigarat", gigarat});
 
     Combatant highwayman;
@@ -357,6 +363,7 @@ void MeleeScreen::init_monsters() {
     highwayman.resilience = 5;
     highwayman.exp = 5;
     highwayman.lvl = 3;
+    highwayman.gold = 3;
     enemies.insert({"highwayman", highwayman});
 
     Combatant mage;
@@ -366,6 +373,7 @@ void MeleeScreen::init_monsters() {
     mage.resilience = 3;
     mage.exp = 5;
     mage.lvl = 3;
+    mage.gold = 5;
     enemies.insert({"mage", mage});
 }
 

@@ -30,6 +30,7 @@
 #include "DialogScreen.h"
 #include "MessageBox.h"
 #include "Sound.h"
+#include "InnScreen.h"
 
 #define DISPLAY_WIDTH   384
 #define DISPLAY_HEIGHT  240
@@ -56,6 +57,7 @@ Sound *sound;
 GameScreen *game_screen;
 MeleeScreen *melee_screen;
 DialogScreen *dialog_screen;
+InnScreen *inn_screen;
 Screen *cur_screen;
 
 void requestAspectRatio(void *);
@@ -102,6 +104,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
         return SDL_APP_FAILURE;
     }
     //SDL_SetRenderLogicalPresentation(renderer, DISPLAY_WIDTH, DISPLAY_HEIGHT, SDL_LOGICAL_PRESENTATION_STRETCH);
+    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
     // Seed the random number generator
     std::random_device rd;
@@ -115,6 +118,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     game_screen = new GameScreen();
     melee_screen = new MeleeScreen();
     dialog_screen = new DialogScreen();
+    inn_screen = new InnScreen();
     cur_screen = game_screen;
 
     return SDL_APP_CONTINUE;  /* carry on with the program! */
@@ -178,6 +182,7 @@ void SDL_AppQuit(void *appstate, SDL_AppResult result)
     delete game_screen;
     delete melee_screen;
     delete dialog_screen;
+    delete inn_screen;
     MessageBox::destroy_font();
     delete sound;
 }

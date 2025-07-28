@@ -64,6 +64,7 @@ private:
     void inc_move_right();
     bool precheck_tile(int x, int y);
     void check_tile();
+    void draw_sprite(int frame, int sprite, int x, int y, int x_start, int y_start, Direction dir);
     void talk();
     void bump();
 
